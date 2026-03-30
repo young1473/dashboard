@@ -625,45 +625,60 @@ function drawGraph(){
 function gTick(){requestAnimationFrame(()=>{simStep();if(S.page===0)drawGraph();gTick();});}
 function nAt(x,y){return[...ideaNodes,...gNodes].find(n=>{if(!n.isIdea&&!n.vis)return false;const r=nR(n),dx=n.x-x,dy=n.y-y;return Math.sqrt(dx*dx+dy*dy)<r+9;});}
 function selGNode(n){gSelId=n.id;renderNodeInfo(n);spawnIdeas(n);renderIdeas(n);}
+/* 현재 선택된 노드를 전역으로 저장 */
+let _curNode = null;
+
 function renderNodeInfo(n){
-  const el=document.getElementById('gsInfo');
-  const c=nC(n);
-  const isEditable=n.type==='goal'||n.type==='todo';
-  const safeLabel=n.label.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
-  const catBadge=n.cat?'<span style="background:'+c+'22;color:'+c+';padding:1px 6px;border-radius:8px;font-size:9px">'+(n.cat==='work'?'업무':'개인')+'</span> ':'';
-  const horizonBadge=n.type==='goal'?'<span>'+(n.horizon==='1m'?'1개월':'3개월')+' 목표</span>':'';
-  const statusBadge=n.status?'<span> · '+(n.status==='done'?'완료':n.status==='inprogress'?'진행중':'예정')+'</span>':'';
-  const ideaBadge=n.isIdea?'<span style="color:'+CIDEA+'">AI 아이디어</span>':'';
-  const progressBar=n.type==='goal'?'<div class="pb" style="margin-bottom:8px"><div class="pf" style="width:'+n.progress+'%;background:'+c+'"></div></div>':'';
-  const ideaBody=n.isIdea&&n.body?'<div style="font-size:10px;color:var(--text2);margin-bottom:8px;line-height:1.5">'+n.body+'</div>':'';
-  const labelEl=isEditable
-    ?('<input id="nodeEditLabel" value="'+safeLabel+'" style="flex:1;font-size:13px;font-weight:600;border:none;border-radius:4px;padding:2px 5px;background:var(--bg2);font-family:inherit;color:inherit;min-width:0;outline:1.5px solid var(--border2)" onblur="saveNodeLabel(\'' + n.id + '\',\'' + n.type + '\',this.value)" onkeydown="if(event.key===\'Enter\')this.blur()">')
-    :('<div style="font-size:13px;font-weight:600;line-height:1.3;flex:1">'+n.label+'</div>');
-  const deleteBtn=isEditable?('<button onclick="deleteNodeFromGraph(\'' + n.id + '\',\'' + n.type + '\')" style="width:100%;margin-top:8px;padding:5px 8px;border:0.5px solid #E24B4A;border-radius:var(--r);background:transparent;color:#E24B4A;font-size:11px;cursor:pointer;font-family:inherit">삭제</button>'):'';
-  el.innerHTML='<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><span style="width:8px;height:8px;border-radius:50%;background:'+c+';flex-shrink:0"></span>'+labelEl+'</div><div style="font-size:10px;color:var(--text2);line-height:1.9;margin-bottom:4px">'+catBadge+horizonBadge+statusBadge+ideaBadge+'</div>'+progressBar+ideaBody+deleteBtn;
+  _curNode = n;
+  const el = document.getElementById('gsInfo');
+  const c = nC(n);
+  const isEditable = n.type==='goal' || n.type==='todo';
+  let html = '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">';
+  html += '<span style="width:8px;height:8px;border-radius:50%;background:'+c+';flex-shrink:0"></span>';
+  if(isEditable){
+    const safe = n.label.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+    html += '<input id="nodeEditLabel" value="'+safe+'" ';
+    html += 'style="flex:1;font-size:13px;font-weight:600;border:none;border-radius:4px;padding:2px 5px;background:var(--bg2);font-family:inherit;color:inherit;min-width:0;outline:1.5px solid var(--border2)" ';
+    html += 'onblur="saveCurrentNode(this.value)" ';
+    html += 'onkeydown="if(event.key==='Enter')this.blur()">';
+  } else {
+    html += '<div style="font-size:13px;font-weight:600;line-height:1.3;flex:1">'+n.label+'</div>';
+  }
+  html += '</div>';
+  html += '<div style="font-size:10px;color:var(--text2);line-height:1.9;margin-bottom:4px">';
+  if(n.cat) html += '<span style="background:'+c+'22;color:'+c+';padding:1px 6px;border-radius:8px;font-size:9px">'+(n.cat==='work'?'업무':'개인')+'</span> ';
+  if(n.type==='goal') html += '<span>'+(n.horizon==='1m'?'1개월':'3개월')+' 목표</span>';
+  if(n.status) html += '<span> · '+(n.status==='done'?'완료':n.status==='inprogress'?'진행중':'예정')+'</span>';
+  if(n.isIdea) html += '<span style="color:'+CIDEA+'">AI 아이디어</span>';
+  html += '</div>';
+  if(n.type==='goal') html += '<div class="pb" style="margin-bottom:8px"><div class="pf" style="width:'+n.progress+'%;background:'+c+'"></div></div>';
+  if(n.isIdea&&n.body) html += '<div style="font-size:10px;color:var(--text2);margin-bottom:8px;line-height:1.5">'+n.body+'</div>';
+  if(isEditable) html += '<button onclick="deleteCurrentNode()" style="width:100%;margin-top:8px;padding:5px 8px;border:0.5px solid #E24B4A;border-radius:var(--r);background:transparent;color:#E24B4A;font-size:11px;cursor:pointer;font-family:inherit">삭제</button>';
+  el.innerHTML = html;
 }
-async function saveNodeLabel(id, type, newLabel){
+
+async function saveCurrentNode(newLabel){
+  if(!_curNode) return;
   newLabel = newLabel.trim();
-  if(!newLabel) return;
+  if(!newLabel || newLabel === _curNode.label) return;
+  const id = _curNode.id, type = _curNode.type;
+  _curNode.label = newLabel;
+  setSyncStatus('loading');
   if(type==='goal'){
-    const g=S.goals.find(g=>g.id===id); if(!g||g.label===newLabel) return;
-    g.label=newLabel;
-    setSyncStatus('loading');
+    const g=S.goals.find(g=>g.id===id); if(g) g.label=newLabel;
     try{ await sbPatch('goals',id,{label:newLabel}); setSyncStatus('ok'); }catch{ setSyncStatus('err','저장 실패'); }
   } else {
-    const t=S.todos.find(t=>t.id===id); if(!t||t.label===newLabel) return;
-    t.label=newLabel;
-    setSyncStatus('loading');
+    const t=S.todos.find(t=>t.id===id); if(t) t.label=newLabel;
     try{ await sbPatch('todos',id,{label:newLabel}); setSyncStatus('ok'); }catch{ setSyncStatus('err','저장 실패'); }
   }
   refreshGNodes(); buildGraph();
 }
 
-async function deleteNodeFromGraph(id, type){
-  const name = type==='goal'
-    ? S.goals.find(g=>g.id===id)?.label
-    : S.todos.find(t=>t.id===id)?.label;
-  if(!confirm(`"${name}" 을 삭제할까요?`)) return;
+async function deleteCurrentNode(){
+  if(!_curNode) return;
+  const id=_curNode.id, type=_curNode.type, name=_curNode.label;
+  if(!confirm('"'+name+'" 을 삭제할까요?')) return;
+  setSyncStatus('loading');
   if(type==='goal'){
     S.goals=S.goals.filter(g=>g.id!==id);
     try{ await sbDelete('goals',id); setSyncStatus('ok'); }catch{ setSyncStatus('err','삭제 실패'); }
@@ -671,11 +686,12 @@ async function deleteNodeFromGraph(id, type){
     S.todos=S.todos.filter(t=>t.id!==id);
     try{ await sbDelete('todos',id); setSyncStatus('ok'); }catch{ setSyncStatus('err','삭제 실패'); }
   }
-  gSelId=null; ideaNodes=[]; ideaEdges=[];
+  _curNode=null; gSelId=null; ideaNodes=[]; ideaEdges=[];
   syncGoalProgress(); refreshGNodes(); buildGraph();
   document.getElementById('gsInfo').innerHTML='<div class="empty-hint">노드를 클릭하면<br>연관 아이디어가 나타나요</div>';
   document.getElementById('gsIdeas').innerHTML='<div class="empty-hint" style="padding-top:26px">↑ 아무 노드나 클릭해보세요</div>';
 }
+
 
 function spawnIdeas(n){
   // Spawn placeholder nodes while Gemini loads
