@@ -1324,7 +1324,7 @@ function renderWeekView(selDate){
   for(let i=0;i<7;i++){
     const d=new Date(weekStart);d.setDate(weekStart.getDate()+i);
     const isT=d.toDateString()===now.toDateString();
-    h+=`<div class="week-day-hd${isT?" today":" }">${DAYS_KO[i]}<br><span style="font-size:13px;font-weight:700">${d.getDate()}</span></div>`;
+    h+=`<div class="week-day-hd${isT?" today":""}">${DAYS_KO[i]}<br><span style="font-size:13px;font-weight:700">${d.getDate()}</span></div>`;
   }
   // rows
   hours.forEach(hr=>{
