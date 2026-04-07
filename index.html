@@ -400,64 +400,57 @@ html,body{height:100%;font-family:-apple-system,'Pretendard',sans-serif;font-siz
 
 <!-- CALENDAR -->
 <div class="page" id="p3">
-  <div class="cal-wrap">
-    <div class="cal-bar">
-      <div class="cal-nav">
-        <button class="cnav-btn" onclick="calMove(-1)">‹</button>
-        <span class="cal-title" id="calTitle"></span>
-        <button class="cnav-btn" onclick="calMove(1)">›</button>
-        <button class="cnav-btn" onclick="calToday()" style="margin-left:4px">오늘</button>
-      </div>
-      <div class="cal-views">
-        <button class="fbtn on" onclick="setCalView('month',this)">월</button>
-        <button class="fbtn" onclick="setCalView('year',this)">연</button>
-        <button class="fbtn" onclick="setCalView('list',this)">목록</button>
-      </div>
-      <div class="cal-filters">
-        <button class="fbtn on" data-f="todo" onclick="toggleCalF('todo',this)">예정</button>
-        <button class="fbtn on" data-f="inprogress" onclick="toggleCalF('inprogress',this)">진행중</button>
-        <button class="fbtn on" data-f="done" onclick="toggleCalF('done',this)">완료</button>
-      </div>
-    </div>
-    <div class="cal-body" id="calBody"></div>
-  </div>
-</div>
+  <div style="display:flex;flex:1;overflow:hidden">
 
-<!-- DIARY -->
-<div class="page" id="p4">
-  <div class="diary-wrap">
-    <div class="diary-list">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <span style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em">일기</span>
-        <button class="abtn p" style="font-size:10px;padding:2px 8px" onclick="newDiary()">+ 새 일기</button>
-      </div>
-      <div id="diaryList"></div>
-    </div>
-    <div class="diary-main" id="diaryMain">
-      <div class="diary-empty">
-        <div style="font-size:32px">📔</div>
-        <div>왼쪽에서 일기를 선택하거나<br>새 일기를 작성하세요</div>
-      </div>
-    </div>
-  </div>
-</div>
+    <!-- LEFT: Mini cal + Schedule + Upcoming -->
+    <div style="width:300px;flex-shrink:0;border-right:0.5px solid var(--border);display:flex;flex-direction:column;overflow:hidden">
 
-<!-- SCHEDULE -->
-<div class="page" id="p5">
-  <div class="sch-wrap">
-    <div class="sch-left">
-      <div class="sch-cal-hd">
+      <!-- Mini calendar header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-bottom:0.5px solid var(--border);flex-shrink:0">
         <button class="fbtn" onclick="schCalMove(-1)">‹</button>
-        <span class="sch-cal-title" id="schCalTitle"></span>
+        <span style="font-size:13px;font-weight:600" id="schCalTitle"></span>
         <button class="fbtn" onclick="schCalMove(1)">›</button>
       </div>
-      <div class="sch-mini-cal" id="schMiniCal"></div>
-      <div class="sch-upcoming">
-        <div class="sch-upcoming-title">다가오는 일정</div>
+
+      <!-- Mini calendar grid -->
+      <div style="padding:8px 10px;border-bottom:0.5px solid var(--border);flex-shrink:0" id="schMiniCal"></div>
+
+      <!-- Upcoming events -->
+      <div style="flex:1;overflow-y:auto;padding:10px 12px">
+        <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px">다가오는 일정</div>
         <div id="schUpcoming"></div>
+        <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin:12px 0 7px">일기 목록</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <button class="abtn p" style="font-size:10px;padding:2px 8px;width:100%" onclick="newDiary()">+ 새 일기 작성</button>
+        </div>
+        <div id="diaryList"></div>
       </div>
     </div>
-    <div class="sch-right" id="schRight"></div>
+
+    <!-- CENTER: Day schedule -->
+    <div style="width:320px;flex-shrink:0;border-right:0.5px solid var(--border);display:flex;flex-direction:column;overflow:hidden">
+      <div style="padding:9px 12px;border-bottom:0.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:12px;font-weight:600" id="schDayLabel">일정</span>
+        <div style="display:flex;gap:3px">
+          <button class="fbtn on" id="schViewDay" onclick="schView='day';schViewUpdate()">일</button>
+          <button class="fbtn" id="schViewWeek" onclick="schView='week';schViewUpdate()">주</button>
+          <button class="fbtn" id="schViewMonth" onclick="schView='month';schViewUpdate()">월</button>
+        </div>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:10px 12px" id="schRight"></div>
+    </div>
+
+    <!-- RIGHT: Diary editor -->
+    <div style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+      <div style="padding:9px 12px;border-bottom:0.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:12px;font-weight:600">일기</span>
+        <span id="diarySaveStatus" style="font-size:10px;color:var(--text3)"></span>
+      </div>
+      <div class="diary-main" id="diaryMain" style="flex:1;overflow-y:auto">
+        <div class="diary-empty"><div style="font-size:28px">📔</div><div>왼쪽에서 일기를 선택하거나<br>새 일기를 작성하세요</div></div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -1225,8 +1218,9 @@ function renderSchMiniCal(){
 function selectSchDate(y,m,d){
   schSelDate=new Date(y,m,d);
   schDate=new Date(y,m,1);
+  if(schView==="month") schView="day";
   renderSchMiniCal();
-  renderSchRight();
+  schViewUpdate();
 }
 
 function renderSchUpcoming(){
@@ -1250,21 +1244,12 @@ function renderSchRight(){
   const isToday=now.toISOString().slice(0,10)===selStr;
   const DAYS_KO=["일","월","화","수","목","금","토"];
   const dayLabel=`${schSelDate.getMonth()+1}월 ${schSelDate.getDate()}일 (${DAYS_KO[schSelDate.getDay()]})`;
+  const lbl=document.getElementById("schDayLabel");
+  if(lbl)lbl.textContent=dayLabel+(isToday?" · 오늘":"");
 
   const colorDots=SCH_COLORS.map(c=>`<span class="cat-dot${schNewColor===c?" on":""}" style="background:${c}" onclick="schNewColor='${c}';renderSchRight()"></span>`).join("");
 
   el.innerHTML=`
-    <div class="sch-day-header">
-      <div>
-        <div class="sch-day-title"${isToday?` style="color:var(--cw)"`:""}>${dayLabel}</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:2px">${dayEvents.length}개 일정</div>
-      </div>
-      <div class="sch-view-tabs">
-        <button class="fbtn${schView==="day"?" on":""}" onclick="schView='day';renderSchRight()">일</button>
-        <button class="fbtn${schView==="week"?" on":""}" onclick="schView='week';renderSchRight()">주</button>
-      </div>
-    </div>
-
     <div class="sch-add-form">
       <div class="sch-add-title">+ 새 일정</div>
       <div class="sch-form-row">
@@ -1287,7 +1272,7 @@ function renderSchRight(){
       </div>
     </div>
 
-    ${schView==="day" ? renderDayView(selStr, dayEvents) : renderWeekView(schSelDate)}
+    ${schView==="day" ? renderDayView(selStr, dayEvents) : schView==="week" ? renderWeekView(schSelDate) : renderMonthView(schSelDate)}
   `;
 }
 
@@ -1298,18 +1283,41 @@ function toggleAllDay(el){
 }
 
 function renderDayView(selStr, dayEvents){
-  if(!dayEvents.length)return`<div style="text-align:center;padding:32px 0;color:var(--text3);font-size:13px">이 날 일정이 없어요<br><span style="font-size:11px">위에서 새 일정을 추가하세요</span></div>`;
-  return dayEvents.map(s=>`
-    <div class="sch-event-card" style="border-left-color:${s.color}">
-      <div class="sch-ev-row">
-        <div class="sch-ev-time">${s.allDay?"종일":s.timeStart+(s.timeEnd?" ~ "+s.timeEnd:"")}</div>
-        <div class="sch-ev-body">
-          <div class="sch-ev-title">${s.title}</div>
-          ${s.desc?`<div class="sch-ev-meta">${s.desc}</div>`:""}
+  // also get todos for this day
+  const mmdd=selStr.slice(5);
+  const dayTodos=S.todos.filter(t=>t.date===mmdd);
+  const goals=S.goals;
+  let h="";
+  // todos section
+  if(dayTodos.length){
+    h+=`<div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">할일 · 목표</div>`;
+    h+=dayTodos.map(t=>{
+      const g=goals.find(g=>g.id===t.goalId);
+      const c=t.cat==="work"?"var(--cw)":"var(--cp)";
+      return`<div style="display:flex;align-items:center;gap:7px;padding:5px 8px;background:var(--bg2);border-radius:var(--r);margin-bottom:4px;border-left:3px solid ${c}">
+        <span style="font-size:11px;${t.status==="done"?"text-decoration:line-through;color:var(--text3)":""}flex:1">${t.label}</span>
+        ${g?`<span style="font-size:9px;color:var(--text3)">${g.label.slice(0,12)}</span>`:""}
+        <span style="font-size:9px;padding:1px 5px;border-radius:6px;background:${t.status==="done"?"#E1F5EE":t.status==="inprogress"?"#E6F1FB":"#FAEEDA"};color:${t.status==="done"?"#0F6E56":t.status==="inprogress"?"#185FA5":"#854F0B"}">${t.status==="done"?"완료":t.status==="inprogress"?"진행중":"예정"}</span>
+      </div>`;
+    }).join("");
+  }
+  // schedule events
+  if(dayEvents.length){
+    if(dayTodos.length) h+=`<div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin:10px 0 6px">일정</div>`;
+    h+=dayEvents.map(s=>`
+      <div class="sch-event-card" style="border-left-color:${s.color}">
+        <div class="sch-ev-row">
+          <div class="sch-ev-time">${s.allDay?"종일":s.timeStart+(s.timeEnd?" ~ "+s.timeEnd:"")}</div>
+          <div class="sch-ev-body">
+            <div class="sch-ev-title">${s.title}</div>
+            ${s.desc?`<div class="sch-ev-meta">${s.desc}</div>`:""}
+          </div>
+          <button class="sch-ev-del" onclick="deleteSchedule('${s.id}')">×</button>
         </div>
-        <button class="sch-ev-del" onclick="deleteSchedule('${s.id}')">×</button>
-      </div>
-    </div>`).join("");
+      </div>`).join("");
+  }
+  if(!dayTodos.length&&!dayEvents.length) h=`<div style="text-align:center;padding:28px 0;color:var(--text3);font-size:13px">이 날 일정이 없어요</div>`;
+  return h;
 }
 
 function renderWeekView(selDate){
@@ -1336,6 +1344,41 @@ function renderWeekView(selDate){
       h+=`<div class="week-cell">${evs.map(s=>`<div class="week-event" style="background:${s.color}22;color:${s.color};border-left:2px solid ${s.color}">${s.title}</div>`).join("")}</div>`;
     }
   });
+  h+=`</div>`;
+  return h;
+}
+
+function renderMonthView(selDate){
+  const y=selDate.getFullYear(),m=selDate.getMonth();
+  const now=new Date();
+  const first=new Date(y,m,1).getDay(),last=new Date(y,m+1,0).getDate(),prevLast=new Date(y,m,0).getDate();
+  const DAYS_KO=["일","월","화","수","목","금","토"];
+  const MONTHS=["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"];
+  // update label
+  const lbl=document.getElementById("schDayLabel");
+  if(lbl)lbl.textContent=`${y}년 ${MONTHS[m]}`;
+  let h=`<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px">`;
+  DAYS_KO.forEach(d=>h+=`<div style="text-align:center;font-size:10px;font-weight:600;color:var(--text3);padding:3px 0">${d}</div>`);
+  h+=`</div><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px">`;
+  // prev month
+  for(let i=first-1;i>=0;i--) h+=`<div style="min-height:60px;padding:3px;border-radius:var(--r);opacity:.3"><div style="font-size:10px;color:var(--text3)">${prevLast-i}</div></div>`;
+  // current month
+  for(let d=1;d<=last;d++){
+    const mm=String(m+1).padStart(2,"0"),dd=String(d).padStart(2,"0"),ds=`${y}-${mm}-${dd}`,mmdd=`${mm}-${dd}`;
+    const isT=now.getFullYear()===y&&now.getMonth()===m&&now.getDate()===d;
+    const isSel=schSelDate.getFullYear()===y&&schSelDate.getMonth()===m&&schSelDate.getDate()===d;
+    const evs=S.schedules.filter(s=>s.date===ds);
+    const todos=S.todos.filter(t=>t.date===mmdd);
+    h+=`<div onclick="selectSchDate(${y},${m},${d})" style="min-height:60px;padding:3px;border-radius:var(--r);cursor:pointer;background:${isSel?"var(--bg2)":"transparent"};border:1.5px solid ${isT?"var(--cw)":isSel?"var(--border2)":"transparent"};transition:background .1s">
+      <div style="font-size:10px;font-weight:600;color:${isT?"var(--cw)":"var(--text2)"};margin-bottom:2px">${d}</div>
+      ${evs.slice(0,2).map(s=>`<div style="font-size:9px;padding:1px 4px;border-radius:3px;background:${s.color}22;color:${s.color};margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.title}</div>`).join("")}
+      ${todos.slice(0,2).map(t=>`<div style="font-size:9px;padding:1px 4px;border-radius:3px;background:${t.cat==="work"?"#E6F1FB":"#E1F5EE"};color:${t.cat==="work"?"#185FA5":"#0F6E56"};margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;${t.status==="done"?"text-decoration:line-through;opacity:.6":""}">${t.label}</div>`).join("")}
+      ${(evs.length+todos.length)>2?`<div style="font-size:9px;color:var(--text3)">+${evs.length+todos.length-2}개</div>`:""}
+    </div>`;
+  }
+  // next month
+  const total=Math.ceil((first+last)/7)*7;
+  for(let d=1;d<=total-(first+last);d++) h+=`<div style="min-height:60px;padding:3px;border-radius:var(--r);opacity:.3"><div style="font-size:10px;color:var(--text3)">${d}</div></div>`;
   h+=`</div>`;
   return h;
 }
@@ -1371,6 +1414,21 @@ async function deleteSchedule(id){
   setSS("loading");
   try{await sbDelete("schedules",id);setSS("ok");}catch{setSS("err","삭제 실패");}
   renderSchedule();
+}
+
+function renderPlanner(){
+  renderSchMiniCal();
+  renderSchUpcoming();
+  renderSchRight();
+  renderDiaryList();
+  renderDiaryEditor();
+}
+
+function schViewUpdate(){
+  document.getElementById("schViewDay")?.classList.toggle("on", schView==="day");
+  document.getElementById("schViewWeek")?.classList.toggle("on", schView==="week");
+  document.getElementById("schViewMonth")?.classList.toggle("on", schView==="month");
+  renderSchRight();
 }
 
 /* ══ BOOT ══ */
