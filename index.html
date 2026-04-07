@@ -259,7 +259,7 @@ html,body{height:100%;font-family:-apple-system,'Pretendard','Apple SD Gothic Ne
       <div class="config-field">
         <label>비밀번호</label>
         <input id="pwInput" type="password" placeholder="비밀번호 입력..." autocomplete="current-password"
-          onkeydown="if(event.key==='Enter')submitPassword()">
+          onkeydown="if(event.key=='Enter')submitPassword()">
       </div>
       <button class="config-save" onclick="submitPassword()">입력</button>
       <p id="pwError" style="color:#E24B4A;font-size:11px;text-align:center;margin-top:8px;display:none">비밀번호가 틀렸습니다</p>
@@ -953,7 +953,7 @@ function goalCardH(g){
     +'style="flex:1;font-size:12px;font-weight:600" '
     +'data-gid="'+g.id+'" '
     +'onblur="saveGoalLabelEv(this)" '
-    +'onkeydown="if(event.key==='Enter')this.blur()">'
+    +'onkeydown="if(event.key=='Enter')this.blur()">'
     +'<span class="htag '+(g.horizon==='1m'?'h1m':'h3m')+'">'+(g.horizon==='1m'?'1개월':'3개월')+'</span>'
     +'<span style="font-size:10px;color:var(--text2)">'+done2+'/'+rel.length+'</span>'
     +'<button data-gid="'+g.id+'" onclick="deleteGoalEv(this)" '
@@ -974,7 +974,7 @@ function todoRowH(t){
       <input class="inline-edit tt${done?' done':''}" value="${t.label.replace(/"/g,'&quot;')}"
         onclick="event.stopPropagation()"
         onblur="saveTodoLabel('${t.id}',this.value)"
-        onkeydown="if(event.key==='Enter')this.blur();if(event.key==='Escape'){this.value=S.todos.find(t=>t.id==='${t.id}').label;this.blur();}">
+        onkeydown="if(event.key=='Enter')this.blur();if(event.key=='Escape'){this.value=S.todos.find(t=>t.id==='${t.id}').label;this.blur();}">
       ${rb}
     </div>
     <div style="display:flex;align-items:center;gap:5px;flex-shrink:0">
@@ -1119,7 +1119,7 @@ function kCardH(t,col){
         onclick="event.stopPropagation()"
         onmousedown="event.stopPropagation()"
         onblur="saveTodoLabel('${t.id}',this.value)"
-        onkeydown="if(event.key==='Enter')this.blur();if(event.key==='Escape'){this.value=S.todos.find(t=>t.id==='${t.id}').label;this.blur();}">
+        onkeydown="if(event.key=='Enter')this.blur();if(event.key=='Escape'){this.value=S.todos.find(t=>t.id==='${t.id}').label;this.blur();}">
       ${rb}
       <span style="display:flex;align-items:center;gap:2px;flex-shrink:0">
         <span class="kc-dot" style="background:${cc}"></span>
