@@ -630,30 +630,36 @@ let _curNode = null;
 
 function renderNodeInfo(n){
   _curNode = n;
-  const el = document.getElementById('gsInfo');
+  const el = document.getElementById("gsInfo");
   const c = nC(n);
-  const isEditable = n.type==='goal' || n.type==='todo';
-  let html = '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">';
-  html += '<span style="width:8px;height:8px;border-radius:50%;background:'+c+';flex-shrink:0"></span>';
+  const isEditable = n.type==="goal" || n.type==="todo";
+  const safe = n.label.replace(/&/g,"&amp;").replace(/"/g,"&quot;");
+  
+  let html = "";
+  html += `<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">`;
+  html += `<span style="width:8px;height:8px;border-radius:50%;background:${c};flex-shrink:0"></span>`;
+  
   if(isEditable){
-    const safe = n.label.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
-    html += '<input id="nodeEditLabel" value="'+safe+'" ';
-    html += 'style="flex:1;font-size:13px;font-weight:600;border:none;border-radius:4px;padding:2px 5px;background:var(--bg2);font-family:inherit;color:inherit;min-width:0;outline:1.5px solid var(--border2)" ';
-    html += 'onblur="saveCurrentNode(this.value)" ';
-    html += 'onkeydown="if(event.key==='Enter')this.blur()">';
+    html += `<input id="nodeEditLabel" value="${safe}"
+      style="flex:1;font-size:13px;font-weight:600;border:none;border-radius:4px;padding:2px 5px;background:var(--bg2);font-family:inherit;color:inherit;min-width:0;outline:1.5px solid var(--border2)"
+      onblur="saveCurrentNode(this.value)"
+      onkeydown="if(event.key=='Enter'||event.key=='Escape')this.blur()">`;
   } else {
-    html += '<div style="font-size:13px;font-weight:600;line-height:1.3;flex:1">'+n.label+'</div>';
+    html += `<div style="font-size:13px;font-weight:600;line-height:1.3;flex:1">${n.label}</div>`;
   }
-  html += '</div>';
-  html += '<div style="font-size:10px;color:var(--text2);line-height:1.9;margin-bottom:4px">';
-  if(n.cat) html += '<span style="background:'+c+'22;color:'+c+';padding:1px 6px;border-radius:8px;font-size:9px">'+(n.cat==='work'?'업무':'개인')+'</span> ';
-  if(n.type==='goal') html += '<span>'+(n.horizon==='1m'?'1개월':'3개월')+' 목표</span>';
-  if(n.status) html += '<span> · '+(n.status==='done'?'완료':n.status==='inprogress'?'진행중':'예정')+'</span>';
-  if(n.isIdea) html += '<span style="color:'+CIDEA+'">AI 아이디어</span>';
-  html += '</div>';
-  if(n.type==='goal') html += '<div class="pb" style="margin-bottom:8px"><div class="pf" style="width:'+n.progress+'%;background:'+c+'"></div></div>';
-  if(n.isIdea&&n.body) html += '<div style="font-size:10px;color:var(--text2);margin-bottom:8px;line-height:1.5">'+n.body+'</div>';
-  if(isEditable) html += '<button onclick="deleteCurrentNode()" style="width:100%;margin-top:8px;padding:5px 8px;border:0.5px solid #E24B4A;border-radius:var(--r);background:transparent;color:#E24B4A;font-size:11px;cursor:pointer;font-family:inherit">삭제</button>';
+  html += `</div>`;
+  
+  html += `<div style="font-size:10px;color:var(--text2);line-height:1.9;margin-bottom:4px">`;
+  if(n.cat) html += `<span style="background:${c}22;color:${c};padding:1px 6px;border-radius:8px;font-size:9px">${n.cat==="work"?"업무":"개인"}</span> `;
+  if(n.type==="goal") html += `<span>${n.horizon==="1m"?"1개월":"3개월"} 목표</span>`;
+  if(n.status) html += `<span> · ${n.status==="done"?"완료":n.status==="inprogress"?"진행중":"예정"}</span>`;
+  if(n.isIdea) html += `<span style="color:${CIDEA}">AI 아이디어</span>`;
+  html += `</div>`;
+  
+  if(n.type==="goal") html += `<div class="pb" style="margin-bottom:8px"><div class="pf" style="width:${n.progress}%;background:${c}"></div></div>`;
+  if(n.isIdea && n.body) html += `<div style="font-size:10px;color:var(--text2);margin-bottom:8px;line-height:1.5">${n.body}</div>`;
+  if(isEditable) html += `<button onclick="deleteCurrentNode()" style="width:100%;margin-top:8px;padding:5px 8px;border:0.5px solid #E24B4A;border-radius:var(--r);background:transparent;color:#E24B4A;font-size:11px;cursor:pointer;font-family:inherit">삭제</button>`;
+  
   el.innerHTML = html;
 }
 
@@ -663,13 +669,13 @@ async function saveCurrentNode(newLabel){
   if(!newLabel || newLabel === _curNode.label) return;
   const id = _curNode.id, type = _curNode.type;
   _curNode.label = newLabel;
-  setSyncStatus('loading');
-  if(type==='goal'){
+  setSyncStatus("loading");
+  if(type==="goal"){
     const g=S.goals.find(g=>g.id===id); if(g) g.label=newLabel;
-    try{ await sbPatch('goals',id,{label:newLabel}); setSyncStatus('ok'); }catch{ setSyncStatus('err','저장 실패'); }
+    try{ await sbPatch("goals",id,{label:newLabel}); setSyncStatus("ok"); } catch{ setSyncStatus("err","저장 실패"); }
   } else {
     const t=S.todos.find(t=>t.id===id); if(t) t.label=newLabel;
-    try{ await sbPatch('todos',id,{label:newLabel}); setSyncStatus('ok'); }catch{ setSyncStatus('err','저장 실패'); }
+    try{ await sbPatch("todos",id,{label:newLabel}); setSyncStatus("ok"); } catch{ setSyncStatus("err","저장 실패"); }
   }
   refreshGNodes(); buildGraph();
 }
@@ -677,22 +683,20 @@ async function saveCurrentNode(newLabel){
 async function deleteCurrentNode(){
   if(!_curNode) return;
   const id=_curNode.id, type=_curNode.type, name=_curNode.label;
-  if(!confirm('"'+name+'" 을 삭제할까요?')) return;
-  setSyncStatus('loading');
-  if(type==='goal'){
+  if(!confirm(`"${name}" 을 삭제할까요?`)) return;
+  setSyncStatus("loading");
+  if(type==="goal"){
     S.goals=S.goals.filter(g=>g.id!==id);
-    try{ await sbDelete('goals',id); setSyncStatus('ok'); }catch{ setSyncStatus('err','삭제 실패'); }
+    try{ await sbDelete("goals",id); setSyncStatus("ok"); } catch{ setSyncStatus("err","삭제 실패"); }
   } else {
     S.todos=S.todos.filter(t=>t.id!==id);
-    try{ await sbDelete('todos',id); setSyncStatus('ok'); }catch{ setSyncStatus('err','삭제 실패'); }
+    try{ await sbDelete("todos",id); setSyncStatus("ok"); } catch{ setSyncStatus("err","삭제 실패"); }
   }
   _curNode=null; gSelId=null; ideaNodes=[]; ideaEdges=[];
   syncGoalProgress(); refreshGNodes(); buildGraph();
-  document.getElementById('gsInfo').innerHTML='<div class="empty-hint">노드를 클릭하면<br>연관 아이디어가 나타나요</div>';
-  document.getElementById('gsIdeas').innerHTML='<div class="empty-hint" style="padding-top:26px">↑ 아무 노드나 클릭해보세요</div>';
+  document.getElementById("gsInfo").innerHTML="<div class='empty-hint'>노드를 클릭하면<br>연관 아이디어가 나타나요</div>";
+  document.getElementById("gsIdeas").innerHTML="<div class='empty-hint' style='padding-top:26px'>↑ 아무 노드나 클릭해보세요</div>";
 }
-
-
 function spawnIdeas(n){
   // Spawn placeholder nodes while Gemini loads
   ideaNodes=[];ideaEdges=[];
@@ -788,11 +792,134 @@ function resizeGraph(){const wrap=document.getElementById('gWrap');gW=wrap.clien
    DASHBOARD
 ══════════════════════════════════════ */
 function renderDash(){
-  syncGoalProgress();refreshGNodes();
-  const total=S.todos.length,done=S.todos.filter(t=>t.status==='done').length,inp=S.todos.filter(t=>t.status==='inprogress').length,pct=total?Math.round(done/total*100):0;
-  const avgW=avg('work'),avgP=avg('personal');
-  document.getElementById('dashL').innerHTML=`<div class="stat-row"><div class="sc"><span class="sn">${total}</span><span class="sl">전체</span></div><div class="sc"><span class="sn">${done}</span><span class="sl">완료</span></div><div class="sc"><span class="sn">${inp}</span><span class="sl">진행중</span></div><div class="sc"><span class="sn">${pct}%</span><span class="sl">달성률</span></div></div>${renderWeeklyChart()}${renderChangelog()}<div class="shd"><span class="dot8" style="background:var(--cw)"></span>업무 목표</div>${S.goals.filter(g=>g.cat==='work').map(goalCardH).join('')}<div class="shd" style="margin-top:11px"><span class="dot8" style="background:var(--cp)"></span>개인 목표</div>${S.goals.filter(g=>g.cat==='personal').map(goalCardH).join('')}<div class="shd" style="margin-top:11px"><span class="dot8" style="background:var(--cw)"></span>업무 할일</div>${S.todos.filter(t=>t.cat==='work').map(todoRowH).join('')}<div class="add-row" style="margin-top:6px"><select class="sel2" id="agW">${S.goals.filter(g=>g.cat==='work').map(g=>`<option value="${g.id}">${g.label.slice(0,12)}</option>`).join('')}</select><input class="ai2" id="aiW" placeholder="업무 할일 추가..." onkeydown="if(event.key==='Enter')addTodoD('work')"><button class="ab2" onclick="addTodoD('work')">+</button></div><div class="shd" style="margin-top:11px"><span class="dot8" style="background:var(--cp)"></span>개인 할일</div>${S.todos.filter(t=>t.cat==='personal').map(todoRowH).join('')}<div class="add-row" style="margin-top:6px"><select class="sel2" id="agP">${S.goals.filter(g=>g.cat==='personal').map(g=>`<option value="${g.id}">${g.label.slice(0,12)}</option>`).join('')}</select><input class="ai2" id="aiP" placeholder="개인 할일 추가..." onkeydown="if(event.key==='Enter')addTodoD('personal')"><button class="ab2" onclick="addTodoD('personal')">+</button></div>`;
-  document.getElementById('dashR').innerHTML=`<div class="panel-lbl">전체 진행률</div><div class="pcrd"><div class="pch"><span>업무</span><span style="font-weight:600">${avgW}%</span></div><div class="pb"><div class="pf" style="width:${avgW}%;background:var(--cw)"></div></div></div><div class="pcrd"><div class="pch"><span>개인</span><span style="font-weight:600">${avgP}%</span></div><div class="pb"><div class="pf" style="width:${avgP}%;background:var(--cp)"></div></div></div><div class="panel-lbl" style="margin-top:13px">목표별 달성</div>${S.goals.map(g=>`<div style="margin-bottom:9px"><div style="font-size:10px;color:var(--text2);margin-bottom:2px">${g.label}</div><div class="pb"><div class="pf" style="width:${g.progress}%;background:${g.cat==='work'?'var(--cw)':'var(--cp)'}"></div></div><div style="font-size:10px;text-align:right;margin-top:2px;color:var(--text2)">${g.progress}%</div></div>`).join('')}`;
+  syncGoalProgress(); refreshGNodes();
+  const total=S.todos.length, done=S.todos.filter(t=>t.status==='done').length,
+        inp=S.todos.filter(t=>t.status==='inprogress').length,
+        pct=total?Math.round(done/total*100):0;
+  const avgW=avg('work'), avgP=avg('personal');
+
+  const dl = document.getElementById('dashL');
+  dl.innerHTML = '';
+
+  // Stats
+  const statDiv = document.createElement('div');
+  statDiv.className = 'stat-row';
+  statDiv.innerHTML = `<div class="sc"><span class="sn">${total}</span><span class="sl">전체</span></div><div class="sc"><span class="sn">${done}</span><span class="sl">완료</span></div><div class="sc"><span class="sn">${inp}</span><span class="sl">진행중</span></div><div class="sc"><span class="sn">${pct}%</span><span class="sl">달성률</span></div>`;
+  dl.appendChild(statDiv);
+
+  // Weekly chart + changelog
+  const misc = document.createElement('div');
+  misc.innerHTML = renderWeeklyChart() + renderChangelog();
+  dl.appendChild(misc);
+
+  // ── 목표 섹션 ──
+  function renderGoalSection(cat, color, label) {
+    const sec = document.createElement('div');
+    // 헤더
+    const hd = document.createElement('div');
+    hd.className = 'shd';
+    hd.style.marginTop = '12px';
+    hd.innerHTML = `<span class="dot8" style="background:${color}"></span>${label} 목표
+      <button onclick="showAddGoalForm('${cat}')" style="margin-left:auto;padding:2px 8px;border:0.5px solid var(--border2);border-radius:var(--r);background:transparent;cursor:pointer;font-size:10px;color:var(--text2);font-family:inherit">+ 추가</button>`;
+    sec.appendChild(hd);
+    // 추가 폼 (숨김)
+    const addForm = document.createElement('div');
+    addForm.id = 'goalAddForm-'+cat;
+    addForm.style.cssText = 'display:none;gap:5px;margin-bottom:7px;flex-wrap:wrap';
+    addForm.className = 'add-row';
+    addForm.innerHTML = `
+      <input class="ai2" id="goalAddLabel-${cat}" placeholder="목표 이름..." style="flex:2;min-width:100px">
+      <select class="sel2" id="goalAddHorizon-${cat}"><option value="1m">1개월</option><option value="3m">3개월</option></select>
+      <button class="ab2" onclick="submitAddGoal('${cat}')">추가</button>
+      <button class="ab2" onclick="document.getElementById('goalAddForm-${cat}').style.display='none'">취소</button>`;
+    sec.appendChild(addForm);
+    // 목표 카드들
+    S.goals.filter(g=>g.cat===cat).forEach(g => {
+      sec.innerHTML += goalCardH(g);
+    });
+    return sec;
+  }
+
+  dl.appendChild(renderGoalSection('work', 'var(--cw)', '업무'));
+  dl.appendChild(renderGoalSection('personal', 'var(--cp)', '개인'));
+
+  // ── 할일 섹션 ──
+  function renderTodoSection(cat, color, label) {
+    const sec = document.createElement('div');
+    const hd = document.createElement('div');
+    hd.className = 'shd';
+    hd.style.marginTop = '12px';
+    hd.innerHTML = `<span class="dot8" style="background:${color}"></span>${label} 할일`;
+    sec.appendChild(hd);
+    const todosDiv = document.createElement('div');
+    S.todos.filter(t=>t.cat===cat).forEach(t => {
+      todosDiv.innerHTML += todoRowH(t);
+    });
+    sec.appendChild(todosDiv);
+    // 추가 폼
+    const addRow = document.createElement('div');
+    addRow.className = 'add-row';
+    addRow.style.marginTop = '6px';
+    const goalOpts = S.goals.filter(g=>g.cat===cat).map(g=>`<option value="${g.id}">${g.label.slice(0,14)}</option>`).join('');
+    addRow.innerHTML = `
+      <select class="sel2" id="agGoal-${cat}">${goalOpts}</select>
+      <select class="sel2" id="agStatus-${cat}">
+        <option value="todo">예정</option>
+        <option value="inprogress">진행중</option>
+        <option value="done">완료</option>
+      </select>
+      <input class="ai2" id="agLabel-${cat}" placeholder="${label} 할일 추가..." style="flex:2;min-width:80px"
+        onkeydown="if(event.key==='Enter')addTodoDash('${cat}')">
+      <button class="ab2" onclick="addTodoDash('${cat}')">+</button>`;
+    sec.appendChild(addRow);
+    return sec;
+  }
+
+  dl.appendChild(renderTodoSection('work', 'var(--cw)', '업무'));
+  dl.appendChild(renderTodoSection('personal', 'var(--cp)', '개인'));
+
+  // Right panel
+  document.getElementById('dashR').innerHTML = `
+    <div class="panel-lbl">전체 진행률</div>
+    <div class="pcrd"><div class="pch"><span>업무</span><span style="font-weight:600">${avgW}%</span></div><div class="pb"><div class="pf" style="width:${avgW}%;background:var(--cw)"></div></div></div>
+    <div class="pcrd"><div class="pch"><span>개인</span><span style="font-weight:600">${avgP}%</span></div><div class="pb"><div class="pf" style="width:${avgP}%;background:var(--cp)"></div></div></div>
+    <div class="panel-lbl" style="margin-top:13px">목표별 달성</div>
+    ${S.goals.map(g=>`<div style="margin-bottom:9px">
+      <div style="font-size:10px;color:var(--text2);margin-bottom:2px">${g.label}</div>
+      <div class="pb"><div class="pf" style="width:${g.progress}%;background:${g.cat==='work'?'var(--cw)':'var(--cp)'}"></div></div>
+      <div style="font-size:10px;text-align:right;margin-top:2px;color:var(--text2)">${g.progress}%</div>
+    </div>`).join('')}`;
+}
+
+function showAddGoalForm(cat){
+  const f = document.getElementById('goalAddForm-'+cat);
+  f.style.display = f.style.display==='none' ? 'flex' : 'none';
+  if(f.style.display==='flex') document.getElementById('goalAddLabel-'+cat)?.focus();
+}
+
+async function submitAddGoal(cat){
+  const label = document.getElementById('goalAddLabel-'+cat)?.value.trim();
+  const horizon = document.getElementById('goalAddHorizon-'+cat)?.value || '1m';
+  if(!label) return;
+  const id = 'g'+Date.now();
+  S.goals.push({id, label, cat, horizon, progress:0});
+  setSyncStatus('loading');
+  try{ await sbPost('goals',{id,label,cat,horizon,progress:0}); setSyncStatus('ok'); }
+  catch{ setSyncStatus('err','저장 실패'); }
+  refreshGNodes(); buildGraph(); renderDash();
+}
+
+async function addTodoDash(cat){
+  const label = document.getElementById('agLabel-'+cat)?.value.trim();
+  const goalId = document.getElementById('agGoal-'+cat)?.value || '';
+  const status = document.getElementById('agStatus-'+cat)?.value || 'todo';
+  if(!label) return;
+  const today = new Date().toISOString().slice(5,10), id='t'+Date.now();
+  S.todos.push({id, label, cat, goalId, date:today, status});
+  setSyncStatus('loading');
+  try{ await sbPost('todos',{id,label,cat,goal_id:goalId,date:today,status}); setSyncStatus('ok'); }
+  catch{ setSyncStatus('err','저장 실패'); }
+  syncGoalProgress(); refreshGNodes(); buildGraph(); renderDash();
 }
 function renderWeeklyChart(){
   const snaps=Object.entries(S.weeklySnap).sort((a,b)=>a[0].localeCompare(b[0])).slice(-6);
@@ -819,15 +946,25 @@ async function delChangelog(id){
 }
 function goalCardH(g){
   const rel=S.todos.filter(t=>t.goalId===g.id),done2=rel.filter(t=>t.status==='done').length;
-  return`<div class="goal-card" style="position:relative"><div class="gc-hd">
-    <input class="inline-edit gc-name" value="${g.label.replace(/"/g,'&quot;')}"
-      onblur="saveGoalLabel('${g.id}',this.value)"
-      onkeydown="if(event.key==='Enter')this.blur();if(event.key==='Escape'){this.value=S.goals.find(g=>g.id==='${g.id}').label;this.blur();}">
-    <span class="htag ${g.horizon==='1m'?'h1m':'h3m'}">${g.horizon==='1m'?'1개월':'3개월'}</span>
-    <span style="font-size:10px;color:var(--text2)">${done2}/${rel.length}</span>
-    <button class="del-btn" onclick="deleteGoal('${g.id}')">×</button>
-  </div><div class="pb"><div class="pf" style="width:${g.progress}%;background:${g.cat==='work'?'var(--cw)':'var(--cp)'}"></div></div></div>`;
+  const safe=g.label.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+  return '<div class="goal-card" style="position:relative">'
+    +'<div class="gc-hd">'
+    +'<input class="inline-edit gc-name" value="'+safe+'" '
+    +'style="flex:1;font-size:12px;font-weight:600" '
+    +'data-gid="'+g.id+'" '
+    +'onblur="saveGoalLabelEv(this)" '
+    +'onkeydown="if(event.key==='Enter')this.blur()">'
+    +'<span class="htag '+(g.horizon==='1m'?'h1m':'h3m')+'">'+(g.horizon==='1m'?'1개월':'3개월')+'</span>'
+    +'<span style="font-size:10px;color:var(--text2)">'+done2+'/'+rel.length+'</span>'
+    +'<button data-gid="'+g.id+'" onclick="deleteGoalEv(this)" '
+    +'style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:14px;padding:0 3px;line-height:1">×</button>'
+    +'</div>'
+    +'<div class="pb"><div class="pf" style="width:'+g.progress+'%;background:'+(g.cat==='work'?'var(--cw)':'var(--cp)')+'"></div></div>'
+    +'</div>';
 }
+
+function saveGoalLabelEv(el){ saveGoalLabel(el.dataset.gid, el.value); }
+function deleteGoalEv(el){ deleteGoal(el.dataset.gid); }
 function todoRowH(t){
   const rb=t.recurId?'<span class="recur-badge">반복</span>':'';
   const done=t.status==='done';
@@ -846,7 +983,7 @@ function todoRowH(t){
         onchange="saveTodoDate('${t.id}',this.value)"
         style="border:0.5px solid var(--border2);border-radius:var(--r);padding:2px 5px;font-size:10px;background:var(--bg2);color:var(--text2);outline:none;font-family:inherit;cursor:pointer">
       <span style="font-size:9px;color:var(--text2);white-space:nowrap">${done?'완료':t.status==='inprogress'?'진행중':'예정'}</span>
-      <button class="del-btn" style="opacity:0" onclick="event.stopPropagation();deleteTodo('${t.id}')">×</button>
+      <button onclick="event.stopPropagation();deleteTodoDash('${t.id}')" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:14px;padding:0 3px;line-height:1;flex-shrink:0">×</button>
     </div>
   </div>`;
 }
@@ -913,6 +1050,7 @@ async function deleteGoal(id){
   renderDash();
 }
 
+async function deleteTodoDash(id){ await deleteTodo(id); }
 async function deleteTodo(id){
   if(!confirm('이 할일을 삭제할까요?')) return;
   S.todos = S.todos.filter(t=>t.id!==id);
@@ -985,7 +1123,7 @@ function kCardH(t,col){
       ${rb}
       <span style="display:flex;align-items:center;gap:2px;flex-shrink:0">
         <span class="kc-dot" style="background:${cc}"></span>
-        <button onclick="event.stopPropagation();deleteTodoKanban('${t.id}')" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:14px;padding:0 2px;line-height:1">×</button>
+        <button onclick="event.stopPropagation();deleteTodoKanban('${t.id}')" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:14px;padding:0 2px;line-height:1;flex-shrink:0">×</button>
       </span>
     </div>
     <div class="kc-meta">
