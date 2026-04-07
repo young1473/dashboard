@@ -301,6 +301,14 @@ html,body{height:100%;font-family:-apple-system,'Pretendard',sans-serif;font-siz
 .diary-textarea:focus{border-color:var(--text3);background:var(--bg3)}
 .diary-actions{display:flex;gap:6px;margin-top:10px;justify-content:flex-end}
 .diary-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:10px;color:var(--text3);font-size:12px}
+.diary-sec{margin-bottom:12px}
+.diary-sec-title{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.diary-item-row{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.diary-item-num{width:18px;height:18px;border-radius:50%;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--text3);flex-shrink:0}
+.diary-item-input{flex:1;padding:5px 8px;border:0.5px solid var(--border2);border-radius:var(--r);font-size:12px;background:var(--bg2);color:var(--text);outline:none;font-family:inherit;line-height:1.5}
+.diary-item-input:focus{border-color:var(--text3);background:var(--bg3)}
+.diary-single-input{width:100%;padding:6px 10px;border:0.5px solid var(--border2);border-radius:var(--r);font-size:12px;background:var(--bg2);color:var(--text);outline:none;font-family:inherit}
+.diary-single-input:focus{border-color:var(--text3);background:var(--bg3)}
 
 /* ── GRAPH EDIT MODE ── */
 .g-edit-bar{display:flex;align-items:center;gap:6px;padding:6px 12px;background:var(--bg2);border-bottom:0.5px solid var(--border);flex-shrink:0;flex-wrap:wrap}
@@ -1044,7 +1052,15 @@ async function loadDiary(){
 
 async function saveDiaryEntry(){
   if(!curDiary)return;
-  const content=document.getElementById("diaryContent")?.value||"";
+  // collect structured fields
+  const grateful=[1,2,3].map(i=>document.getElementById("grateful"+i)?.value||"").filter(v=>v);
+  const doneWell=[1,2,3].map(i=>document.getElementById("doneWell"+i)?.value||"").filter(v=>v);
+  const learned=document.getElementById("learned")?.value||"";
+  const improve=document.getElementById("improve")?.value||"";
+  const freeText=document.getElementById("diaryContent")?.value||"";
+  // pack into content JSON
+  const structured={grateful,doneWell,learned,improve,freeText};
+  const content=JSON.stringify(structured);
   const mood=curDiary.mood||"";
   const goalId=document.getElementById("diaryGoalSel")?.value||"";
   const date=document.getElementById("diaryDateInp")?.value||curDiary.date;
@@ -1098,7 +1114,7 @@ function renderDiaryList(){
   if(!S.diary.length){el.innerHTML=`<div style="font-size:11px;color:var(--text3);padding:8px 0;text-align:center">일기가 없어요</div>`;return;}
   el.innerHTML=S.diary.map(d=>`<div class="diary-entry-item${curDiary&&String(curDiary.id)===String(d.id)?" active":""}" onclick="openDiary('${d.id}')">
     <div class="de-date"><span class="de-mood">${d.mood||"📔"}</span>${d.date}</div>
-    <div class="de-preview">${d.content.slice(0,40)||"(내용 없음)"}</div>
+    <div class="de-preview">${getPreview(d.content)}</div>
   </div>`).join("");
 }
 
@@ -1107,20 +1123,52 @@ function renderDiaryEditor(){
   if(!curDiary){main.innerHTML=`<div class="diary-empty"><div style="font-size:32px">📔</div><div>왼쪽에서 일기를 선택하거나<br>새 일기를 작성하세요</div></div>`;return;}
   const goalOpts=`<option value="">목표 연결 안 함</option>`+S.goals.map(g=>`<option value="${g.id}" ${curDiary.goalId===g.id?"selected":""}>${g.label.slice(0,16)}</option>`).join("");
   const moodBtns=MOODS.map(m=>`<button class="mood-btn${curDiary.mood===m?" on":""}" data-mood="${m}" onclick="setMood('${m}')">${m}</button>`).join("");
-  main.innerHTML=`<div class="diary-editor">
+  // parse structured content
+  let s={grateful:["","",""],doneWell:["","",""],learned:"",improve:"",freeText:""};
+  try{const p=JSON.parse(curDiary.content||"{}");if(p.freeText!==undefined){s=p;s.grateful=s.grateful||["","",""];s.doneWell=s.doneWell||["","",""];}}catch{s.freeText=curDiary.content||"";}
+  main.innerHTML=`<div class="diary-editor" style="overflow-y:auto">
     <div class="diary-editor-top">
       <input type="date" class="diary-date-input" id="diaryDateInp" value="${curDiary.date}">
       <div class="mood-btns">${moodBtns}</div>
       <select class="diary-goal-sel" id="diaryGoalSel">${goalOpts}</select>
       <button class="abtn" onclick="deleteDiaryEntry('${curDiary.id}')" style="${curDiary.isNew?"display:none":""}">삭제</button>
     </div>
-    <textarea class="diary-textarea" id="diaryContent" placeholder="오늘 하루를 기록하세요...">${curDiary.content||""}</textarea>
+
+    <div class="diary-sec">
+      <div class="diary-sec-title">🙏 감사한 일 3가지</div>
+      ${[0,1,2].map(i=>`<div class="diary-item-row"><span class="diary-item-num">${i+1}</span><input class="diary-item-input" id="grateful${i+1}" placeholder="감사한 일을 적어보세요..." value="${(s.grateful[i]||"").replace(/"/g,"&quot;")}"></div>`).join("")}
+    </div>
+
+    <div class="diary-sec">
+      <div class="diary-sec-title">✅ 잘 한 일 3가지</div>
+      ${[0,1,2].map(i=>`<div class="diary-item-row"><span class="diary-item-num">${i+1}</span><input class="diary-item-input" id="doneWell${i+1}" placeholder="오늘 잘 한 일을 적어보세요..." value="${(s.doneWell[i]||"").replace(/"/g,"&quot;")}"></div>`).join("")}
+    </div>
+
+    <div class="diary-sec">
+      <div class="diary-sec-title">📈 오늘 배운 것</div>
+      <input class="diary-single-input" id="learned" placeholder="오늘 배우거나 깨달은 것..." value="${(s.learned||"").replace(/"/g,"&quot;")}">
+    </div>
+
+    <div class="diary-sec">
+      <div class="diary-sec-title">🔄 내일 더 잘 할 것</div>
+      <input class="diary-single-input" id="improve" placeholder="내일 개선하고 싶은 것..." value="${(s.improve||"").replace(/"/g,"&quot;")}">
+    </div>
+
+    <div class="diary-sec" style="flex:1;display:flex;flex-direction:column">
+      <div class="diary-sec-title">📝 오늘의 일기</div>
+      <textarea class="diary-textarea" id="diaryContent" placeholder="오늘 하루를 자유롭게 기록하세요..." style="min-height:120px">${s.freeText||""}</textarea>
+    </div>
+
     <div class="diary-actions">
       <button class="abtn p" onclick="saveDiaryEntry()">저장</button>
     </div>
   </div>`;
 }
 
+function getPreview(rawContent){
+  try{const p=JSON.parse(rawContent);if(p.freeText)return p.freeText.slice(0,40);if(p.grateful&&p.grateful[0])return "🙏 "+p.grateful[0].slice(0,36);}catch{}
+  return rawContent?rawContent.slice(0,40):"(내용 없음)";
+}
 function renderDiary(){renderDiaryList();renderDiaryEditor();}
 
 /* ══════════════════
