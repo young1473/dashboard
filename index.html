@@ -232,6 +232,54 @@ html,body{height:100%;font-family:-apple-system,'Pretendard',sans-serif;font-siz
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
 
+/* ── SCHEDULE ── */
+.sch-wrap{display:flex;flex:1;overflow:hidden}
+.sch-left{width:260px;flex-shrink:0;border-right:0.5px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.sch-right{flex:1;overflow-y:auto;padding:14px 16px}
+.sch-cal-hd{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:0.5px solid var(--border);flex-shrink:0}
+.sch-cal-title{font-size:13px;font-weight:600}
+.sch-mini-cal{padding:8px;border-bottom:0.5px solid var(--border);flex-shrink:0}
+.mini-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.mini-dh{text-align:center;font-size:9px;color:var(--text3);padding:2px 0}
+.mini-day{text-align:center;font-size:11px;padding:3px 2px;border-radius:4px;cursor:pointer;transition:background .1s;line-height:1.2}
+.mini-day:hover{background:var(--bg2)}
+.mini-day.today{background:var(--cw);color:#fff;font-weight:600}
+.mini-day.selected{outline:1.5px solid var(--cw)}
+.mini-day.has-event{position:relative}
+.mini-day.has-event::after{content:"";position:absolute;bottom:1px;left:50%;transform:translateX(-50%);width:3px;height:3px;border-radius:50%;background:var(--ct)}
+.mini-day.other{color:var(--text3);opacity:.5}
+.sch-upcoming{flex:1;overflow-y:auto;padding:8px}
+.sch-upcoming-title{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;padding:0 2px}
+.sch-item-mini{display:flex;align-items:center;gap:6px;padding:5px 6px;border-radius:var(--r);cursor:pointer;margin-bottom:3px;transition:background .1s}
+.sch-item-mini:hover{background:var(--bg2)}
+.sch-item-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.sch-item-label{font-size:11px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sch-item-time{font-size:10px;color:var(--text3)}
+.sch-day-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sch-day-title{font-size:15px;font-weight:700}
+.sch-view-tabs{display:flex;gap:4px}
+.sch-event-card{background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--rl);padding:10px 12px;margin-bottom:8px;border-left:3px solid var(--ct)}
+.sch-event-card:hover .sch-ev-del{opacity:1}
+.sch-ev-row{display:flex;align-items:flex-start;gap:8px}
+.sch-ev-time{font-size:11px;color:var(--text2);min-width:70px;padding-top:1px;white-space:nowrap}
+.sch-ev-body{flex:1}
+.sch-ev-title{font-size:13px;font-weight:600;margin-bottom:2px}
+.sch-ev-meta{font-size:10px;color:var(--text3)}
+.sch-ev-del{background:none;border:none;cursor:pointer;color:var(--text3);font-size:13px;padding:0 2px;opacity:0;transition:opacity .15s}
+.sch-add-form{background:var(--bg2);border-radius:var(--rl);padding:12px 14px;margin-bottom:12px;border:0.5px solid var(--border)}
+.sch-add-title{font-size:11px;font-weight:700;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em}
+.sch-form-row{display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap}
+.sch-form-row input,.sch-form-row select,.sch-form-row textarea{padding:5px 8px;border:0.5px solid var(--border2);border-radius:var(--r);font-size:12px;background:var(--bg3);color:var(--text);outline:none;font-family:inherit}
+.sch-form-row input:focus,.sch-form-row textarea:focus{border-color:var(--text3)}
+.cat-dot{width:10px;height:10px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:border-color .15s;flex-shrink:0}
+.cat-dot.on{border-color:var(--text)}
+.week-grid{display:grid;grid-template-columns:60px repeat(7,1fr);gap:0;border:0.5px solid var(--border);border-radius:var(--rl);overflow:hidden}
+.week-day-hd{text-align:center;padding:6px 2px;font-size:11px;font-weight:600;border-bottom:0.5px solid var(--border);background:var(--bg2)}
+.week-day-hd.today{color:var(--cw)}
+.week-time-col{font-size:10px;color:var(--text3);text-align:right;padding:4px 6px 4px 0;border-bottom:0.5px solid var(--border);background:var(--bg2)}
+.week-cell{min-height:36px;border-bottom:0.5px solid var(--border);border-left:0.5px solid var(--border);padding:2px;position:relative}
+.week-event{font-size:9px;padding:2px 4px;border-radius:3px;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+
 /* ── DIARY ── */
 .diary-wrap{display:flex;flex:1;overflow:hidden}
 .diary-list{width:220px;flex-shrink:0;border-right:0.5px solid var(--border);overflow-y:auto;padding:10px}
@@ -272,6 +320,7 @@ html,body{height:100%;font-family:-apple-system,'Pretendard',sans-serif;font-siz
     <button class="ntab" onclick="goPage(2,this)">칸반</button>
     <button class="ntab" onclick="goPage(3,this)">캘린더</button>
     <button class="ntab" onclick="goPage(4,this)">일기</button>
+    <button class="ntab" onclick="goPage(5,this)">일정</button>
   </div>
   <div class="nav-right">
     <div class="sync"><span class="sdot loading" id="sdot"></span><span id="stext">연결 중</span></div>
@@ -385,6 +434,25 @@ html,body{height:100%;font-family:-apple-system,'Pretendard',sans-serif;font-siz
   </div>
 </div>
 
+<!-- SCHEDULE -->
+<div class="page" id="p5">
+  <div class="sch-wrap">
+    <div class="sch-left">
+      <div class="sch-cal-hd">
+        <button class="fbtn" onclick="schCalMove(-1)">‹</button>
+        <span class="sch-cal-title" id="schCalTitle"></span>
+        <button class="fbtn" onclick="schCalMove(1)">›</button>
+      </div>
+      <div class="sch-mini-cal" id="schMiniCal"></div>
+      <div class="sch-upcoming">
+        <div class="sch-upcoming-title">다가오는 일정</div>
+        <div id="schUpcoming"></div>
+      </div>
+    </div>
+    <div class="sch-right" id="schRight"></div>
+  </div>
+</div>
+
 <!-- RECURRING MODAL -->
 <div class="modal-bg" id="recurModal">
   <div class="modal-box">
@@ -492,6 +560,7 @@ async function initApp(){
     setSS("ok");
     await injectRecurring();
     await loadDiary();
+    await loadSchedules();
     sbReady=true;
     goPage(0,document.querySelector(".ntab"));
   } catch(e){
@@ -507,12 +576,13 @@ function goPage(n,el){
   document.querySelectorAll(".ntab").forEach(t=>t.classList.remove("active"));
   el.classList.add("active");
   if(!sbReady)return;
-  showScreen(["p0","p1","p2","p3","p4"][n]);
+  showScreen(["p0","p1","p2","p3","p4","p5"][n]);
   if(n===0)resizeGraph();
   if(n===1){snapWeek();renderDash();}
   if(n===2)renderKanban();
   if(n===3)renderCal();
   if(n===4)renderDiary();
+  if(n===5)renderSchedule();
 }
 
 /* ══ WEEKLY SNAP ══ */
@@ -965,7 +1035,7 @@ let curDiary=null;
 async function loadDiary(){
   try{
     const rows=await sbGet("diary","order=date.desc");
-    S.diary=rows.map(r=>({id:r.id,date:r.date,mood:r.mood||"",goalId:r.goal_id||"",content:r.content||""}));
+    S.diary=rows.map(r=>({id:String(r.id),date:r.date,mood:r.mood||"",goalId:r.goal_id||"",content:r.content||""}));
   }catch(e){
     // diary table may not exist yet — create it
     console.log("diary table missing, will create on first save");
@@ -983,8 +1053,10 @@ async function saveDiaryEntry(){
   try{
     if(curDiary.isNew){
       const res=await sbPost("diary",{date,mood,goal_id:goalId,content});
-      curDiary.id=res[0].id;curDiary.isNew=false;
-      S.diary.unshift(curDiary);
+      curDiary.id=String(res[0].id);curDiary.isNew=false;
+      const saved={...curDiary};
+      S.diary.unshift(saved);
+      curDiary=saved;
     } else {
       await sbPatch("diary",curDiary.id,{date,mood,goal_id:goalId,content});
       const idx=S.diary.findIndex(d=>d.id===curDiary.id);
@@ -997,7 +1069,7 @@ async function saveDiaryEntry(){
 
 async function deleteDiaryEntry(id){
   if(!confirm("이 일기를 삭제할까요?"))return;
-  S.diary=S.diary.filter(d=>d.id!==id);
+  S.diary=S.diary.filter(d=>String(d.id)!==String(id));
   try{await sbDelete("diary",id);}catch{}
   curDiary=null;
   renderDiary();
@@ -1010,7 +1082,7 @@ function newDiary(){
 }
 
 function openDiary(id){
-  curDiary=S.diary.find(d=>d.id===id)||null;
+  curDiary=S.diary.find(d=>String(d.id)===String(id))||null;
   renderDiaryEditor();
   renderDiaryList();
 }
@@ -1024,7 +1096,7 @@ function setMood(mood){
 function renderDiaryList(){
   const el=document.getElementById("diaryList");
   if(!S.diary.length){el.innerHTML=`<div style="font-size:11px;color:var(--text3);padding:8px 0;text-align:center">일기가 없어요</div>`;return;}
-  el.innerHTML=S.diary.map(d=>`<div class="diary-entry-item${curDiary&&curDiary.id===d.id?" active":""}" onclick="openDiary('${d.id}')">
+  el.innerHTML=S.diary.map(d=>`<div class="diary-entry-item${curDiary&&String(curDiary.id)===String(d.id)?" active":""}" onclick="openDiary('${d.id}')">
     <div class="de-date"><span class="de-mood">${d.mood||"📔"}</span>${d.date}</div>
     <div class="de-preview">${d.content.slice(0,40)||"(내용 없음)"}</div>
   </div>`).join("");
@@ -1050,6 +1122,208 @@ function renderDiaryEditor(){
 }
 
 function renderDiary(){renderDiaryList();renderDiaryEditor();}
+
+/* ══════════════════
+   SCHEDULE
+══════════════════ */
+S.schedules=[];
+let schDate=new Date();
+let schView="day"; // day | week
+let schSelDate=new Date();
+const SCH_COLORS=["#3266ad","#0F6E56","#BA7517","#7F77DD","#E24B4A","#888780"];
+let schNewColor=SCH_COLORS[0];
+
+async function loadSchedules(){
+  try{
+    const rows=await sbGet("schedules","order=date.asc,time_start.asc");
+    S.schedules=rows.map(r=>({id:r.id,title:r.title,date:r.date,timeStart:r.time_start||"",timeEnd:r.time_end||"",color:r.color||SCH_COLORS[0],desc:r.description||"",allDay:r.all_day||false}));
+  }catch(e){console.log("schedules table missing");}
+}
+
+function schCalMove(dir){
+  schDate=new Date(schDate.getFullYear(),schDate.getMonth()+dir,1);
+  renderSchMiniCal();renderSchUpcoming();
+}
+
+function renderSchedule(){
+  renderSchMiniCal();
+  renderSchUpcoming();
+  renderSchRight();
+}
+
+function renderSchMiniCal(){
+  const y=schDate.getFullYear(),m=schDate.getMonth();
+  const now=new Date();
+  document.getElementById("schCalTitle").textContent=`${y}년 ${m+1}월`;
+  const first=new Date(y,m,1).getDay(),last=new Date(y,m+1,0).getDate();
+  const prevLast=new Date(y,m,0).getDate();
+  const DAYS=["일","월","화","수","목","금","토"];
+  let h=`<div class="mini-grid">`;
+  DAYS.forEach(d=>h+=`<div class="mini-dh">${d}</div>`);
+  for(let i=first-1;i>=0;i--)h+=`<div class="mini-day other">${prevLast-i}</div>`;
+  for(let d=1;d<=last;d++){
+    const ds=`${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    const isT=now.getFullYear()===y&&now.getMonth()===m&&now.getDate()===d;
+    const isSel=schSelDate.getFullYear()===y&&schSelDate.getMonth()===m&&schSelDate.getDate()===d;
+    const hasEv=S.schedules.some(s=>s.date===ds);
+    h+=`<div class="mini-day${isT?" today":""}${isSel?" selected":""}${hasEv?" has-event":""}" onclick="selectSchDate(${y},${m},${d})">${d}</div>`;
+  }
+  const total=Math.ceil((first+last)/7)*7;
+  for(let d=1;d<=total-(first+last);d++)h+=`<div class="mini-day other">${d}</div>`;
+  h+=`</div>`;
+  document.getElementById("schMiniCal").innerHTML=h;
+}
+
+function selectSchDate(y,m,d){
+  schSelDate=new Date(y,m,d);
+  schDate=new Date(y,m,1);
+  renderSchMiniCal();
+  renderSchRight();
+}
+
+function renderSchUpcoming(){
+  const now=new Date();
+  const nowStr=now.toISOString().slice(0,10);
+  const upcoming=S.schedules.filter(s=>s.date>=nowStr).slice(0,8);
+  const el=document.getElementById("schUpcoming");
+  if(!upcoming.length){el.innerHTML=`<div style="font-size:11px;color:var(--text3);padding:4px">다가오는 일정 없음</div>`;return;}
+  el.innerHTML=upcoming.map(s=>`<div class="sch-item-mini" onclick="selectSchDate(...'${s.date}'.split('-').map((v,i)=>i===1?+v-1:+v))">
+    <span class="sch-item-dot" style="background:${s.color}"></span>
+    <span class="sch-item-label">${s.title}</span>
+    <span class="sch-item-time">${s.date.slice(5)}${s.timeStart?" "+s.timeStart:""}</span>
+  </div>`).join("");
+}
+
+function renderSchRight(){
+  const el=document.getElementById("schRight");
+  const selStr=`${schSelDate.getFullYear()}-${String(schSelDate.getMonth()+1).padStart(2,"0")}-${String(schSelDate.getDate()).padStart(2,"0")}`;
+  const dayEvents=S.schedules.filter(s=>s.date===selStr).sort((a,b)=>(a.timeStart||"").localeCompare(b.timeStart||""));
+  const now=new Date();
+  const isToday=now.toISOString().slice(0,10)===selStr;
+  const DAYS_KO=["일","월","화","수","목","금","토"];
+  const dayLabel=`${schSelDate.getMonth()+1}월 ${schSelDate.getDate()}일 (${DAYS_KO[schSelDate.getDay()]})`;
+
+  const colorDots=SCH_COLORS.map(c=>`<span class="cat-dot${schNewColor===c?" on":""}" style="background:${c}" onclick="schNewColor='${c}';renderSchRight()"></span>`).join("");
+
+  el.innerHTML=`
+    <div class="sch-day-header">
+      <div>
+        <div class="sch-day-title"${isToday?` style="color:var(--cw)"`:""}>${dayLabel}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">${dayEvents.length}개 일정</div>
+      </div>
+      <div class="sch-view-tabs">
+        <button class="fbtn${schView==="day"?" on":""}" onclick="schView='day';renderSchRight()">일</button>
+        <button class="fbtn${schView==="week"?" on":""}" onclick="schView='week';renderSchRight()">주</button>
+      </div>
+    </div>
+
+    <div class="sch-add-form">
+      <div class="sch-add-title">+ 새 일정</div>
+      <div class="sch-form-row">
+        <input id="schTitle" placeholder="일정 제목..." style="flex:2;min-width:120px">
+        <input type="date" id="schDateInp" value="${selStr}" style="min-width:130px">
+      </div>
+      <div class="sch-form-row">
+        <input type="time" id="schTimeStart" placeholder="시작 시간">
+        <span style="align-self:center;font-size:12px;color:var(--text2)">~</span>
+        <input type="time" id="schTimeEnd" placeholder="종료 시간">
+        <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text2);cursor:pointer">
+          <input type="checkbox" id="schAllDay" onchange="toggleAllDay(this)"> 종일
+        </label>
+      </div>
+      <div class="sch-form-row" style="align-items:center;gap:8px">
+        <span style="font-size:11px;color:var(--text2)">색상</span>
+        ${colorDots}
+        <input id="schDesc" placeholder="메모 (선택)" style="flex:1;min-width:80px">
+        <button class="abtn p" onclick="addSchedule()">추가</button>
+      </div>
+    </div>
+
+    ${schView==="day" ? renderDayView(selStr, dayEvents) : renderWeekView(schSelDate)}
+  `;
+}
+
+function toggleAllDay(el){
+  const ts=document.getElementById("schTimeStart"),te=document.getElementById("schTimeEnd");
+  ts.disabled=el.checked;te.disabled=el.checked;
+  ts.style.opacity=el.checked?".4":"1";te.style.opacity=el.checked?".4":"1";
+}
+
+function renderDayView(selStr, dayEvents){
+  if(!dayEvents.length)return`<div style="text-align:center;padding:32px 0;color:var(--text3);font-size:13px">이 날 일정이 없어요<br><span style="font-size:11px">위에서 새 일정을 추가하세요</span></div>`;
+  return dayEvents.map(s=>`
+    <div class="sch-event-card" style="border-left-color:${s.color}">
+      <div class="sch-ev-row">
+        <div class="sch-ev-time">${s.allDay?"종일":s.timeStart+(s.timeEnd?" ~ "+s.timeEnd:"")}</div>
+        <div class="sch-ev-body">
+          <div class="sch-ev-title">${s.title}</div>
+          ${s.desc?`<div class="sch-ev-meta">${s.desc}</div>`:""}
+        </div>
+        <button class="sch-ev-del" onclick="deleteSchedule('${s.id}')">×</button>
+      </div>
+    </div>`).join("");
+}
+
+function renderWeekView(selDate){
+  const dow=selDate.getDay();
+  const weekStart=new Date(selDate);weekStart.setDate(selDate.getDate()-dow);
+  const DAYS_KO=["일","월","화","수","목","금","토"];
+  const now=new Date();
+  const hours=["08","09","10","11","12","13","14","15","16","17","18","19","20","21"];
+  let h=`<div class="week-grid">`;
+  // header
+  h+=`<div style="background:var(--bg2);border-bottom:0.5px solid var(--border);padding:6px 2px"></div>`;
+  for(let i=0;i<7;i++){
+    const d=new Date(weekStart);d.setDate(weekStart.getDate()+i);
+    const isT=d.toDateString()===now.toDateString();
+    h+=`<div class="week-day-hd${isT?" today":" }">${DAYS_KO[i]}<br><span style="font-size:13px;font-weight:700">${d.getDate()}</span></div>`;
+  }
+  // rows
+  hours.forEach(hr=>{
+    h+=`<div class="week-time-col">${hr}:00</div>`;
+    for(let i=0;i<7;i++){
+      const d=new Date(weekStart);d.setDate(weekStart.getDate()+i);
+      const ds=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+      const evs=S.schedules.filter(s=>s.date===ds&&s.timeStart&&s.timeStart.startsWith(hr));
+      h+=`<div class="week-cell">${evs.map(s=>`<div class="week-event" style="background:${s.color}22;color:${s.color};border-left:2px solid ${s.color}">${s.title}</div>`).join("")}</div>`;
+    }
+  });
+  h+=`</div>`;
+  return h;
+}
+
+async function addSchedule(){
+  const title=document.getElementById("schTitle")?.value.trim();
+  if(!title){alert("일정 제목을 입력하세요");return;}
+  const date=document.getElementById("schDateInp")?.value||new Date().toISOString().slice(0,10);
+  const timeStart=document.getElementById("schTimeStart")?.value||"";
+  const timeEnd=document.getElementById("schTimeEnd")?.value||"";
+  const allDay=document.getElementById("schAllDay")?.checked||false;
+  const desc=document.getElementById("schDesc")?.value||"";
+  const color=schNewColor;
+  const id="s"+Date.now();
+  const newSch={id,title,date,timeStart,timeEnd,color,desc,allDay};
+  S.schedules.push(newSch);
+  S.schedules.sort((a,b)=>a.date.localeCompare(b.date)||(a.timeStart||"").localeCompare(b.timeStart||""));
+  setSS("loading");
+  try{
+    await sbPost("schedules",{id,title,date,time_start:timeStart,time_end:timeEnd,color,description:desc,all_day:allDay});
+    setSS("ok");
+  }catch(e){setSS("err","저장 실패");console.error(e);}
+  // update selected date
+  const parts=date.split("-");
+  schSelDate=new Date(+parts[0],+parts[1]-1,+parts[2]);
+  schDate=new Date(+parts[0],+parts[1]-1,1);
+  renderSchedule();
+}
+
+async function deleteSchedule(id){
+  if(!confirm("이 일정을 삭제할까요?"))return;
+  S.schedules=S.schedules.filter(s=>s.id!==id);
+  setSS("loading");
+  try{await sbDelete("schedules",id);setSS("ok");}catch{setSS("err","삭제 실패");}
+  renderSchedule();
+}
 
 /* ══ BOOT ══ */
 window.addEventListener("load",()=>{
